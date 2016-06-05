@@ -1,0 +1,16 @@
+{
+  "author": "neme <neme@whispered.se>",
+  "name": "hapi-users-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^0.8.5",
+    "joi": "^8.1.0",
+    "joi-objectid": "^2.0.0",
+    "jsonwebtoken": "^7.0.0"
+  }
+}
