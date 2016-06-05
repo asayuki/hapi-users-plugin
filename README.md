@@ -10,23 +10,23 @@ npm i hapi-users-plugin --save
 
 ## Requirements
 
-For the plugin to work at all, you need to install and configurate `hapi-mongodb` and enable caching with [Catbox](https://github.com/hapijs/catbox) or any other cache-engine. Full example further down.
-
-For sessions you need to install `hapi-auth-cookie` and set the correct option value.
-
-For tokens you need to install `hapi-auth-jwt` and set the correct option value.
+* `hapi-mongodb` installed and configurated in you hapi-server.
+* Enable caching with either [Catbox](https://github.com/hapijs/catbox) or any other cache-engine.
+* For session based login: `hapi-auth-cookie`
+* For token based login: `hapi-auth-jwt`
 
 ## Usage
 
 ```js
 server.register([
-  // Register mongodb for plugin to work at all
+  // Register mongodb
   // Register hapi-auth-cookie for session/cookies
   // Register hapi-auth-jwt for tokens
   {
     register: require('hapi-users-plugin'),
     options: {
       collection: 'users',
+      cache_name: 'serverCache',
       session: true,
       token: true,
       expire: 60 * 60 * 24 * 365,
@@ -48,7 +48,7 @@ Full example further down.
 - `session_private_key` - A private session/token key. Minimum 32 characters.
 - `extra_fields` - Extra fields for user object. Use [Joi](https://github.com/hapijs/joi) with this for validation. Example below. If you use .required() on any field, this will field will also be required in payload when trying to update user as this extends default payload.
 
-```
+```js
 extra_fields: {
   firstname: Joi.string().min(2).max(30),
   lastname: Joi.string().min(2).max(30)
