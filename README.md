@@ -46,10 +46,18 @@ Full example further down.
 - `token` - `true` or `false`, defaults to `false`. Enables login with tokens. Required package needed for this option: `hapi-auth-jwt`.
 - `expire` -  Milliseconds for session and token to expire. Defaults to `2147483647`.
 - `session_private_key` - A private session/token key. Minimum 32 characters.
-- `extra_fields` - Extra fields for user object. Use [Joi](https://github.com/hapijs/joi) with this for validation. Example below. If you use .required() on any field, this will field will also be required in payload when trying to update user as this extends default payload.
+- `create_extra_fields` - Extra fields for create user object. Use [Joi](https://github.com/hapijs/joi) with this for validation.
+- `update_extra_fields` - Extra fields for update user object. Use [Joi](https://github.com/hapijs/joi) with this for validation.
 
 ```js
-extra_fields: {
+create_extra_fields: {
+  firstname: Joi.string().min(2).max(30).required(),
+  lastname: Joi.string().min(2).max(30).required()
+}
+```
+
+```js
+update_extra_fields: {
   firstname: Joi.string().min(2).max(30),
   lastname: Joi.string().min(2).max(30)
 }
@@ -76,6 +84,7 @@ All endpoints require that the user i logged in, except login-endpoint.
     * Payload:
         * `username` - Joi.string().required()
         * `password` - Joi.string().required()
+        * `token` - Joi.boolean() - If omitted defaults to `false`, which is session.
 * `GET /api/users/logout`
 
 ### Full example
@@ -132,7 +141,11 @@ plugins.push({
     expire: 60 * 60 * 24 * 365,
     session_private_key: 'KeyThatIsEqualOrLongerThan32CharactersIsNeededForThis',
     cache_name: 'serverCache',
-    extra_fields: {
+    create_extra_fields: {
+      firstname: Joi.string().min(2).max(30).required(),
+      lastname: Joi.string().min(2).max(30).required()
+    },
+    update_extra_fields: {
       firstname: Joi.string().min(2).max(30),
       lastname: Joi.string().min(2).max(30)
     }
