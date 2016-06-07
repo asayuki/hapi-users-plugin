@@ -1,5 +1,9 @@
 # Changelog
 
+## 2016-06-07
+
+* You will now be asked to create a user when starting application if there are no users.
+
 ## 2016-06-06
 
 * Changes to extra_fields
