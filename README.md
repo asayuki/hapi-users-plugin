@@ -48,6 +48,7 @@ Full example further down.
 - `session_private_key` - A private session/token key. Minimum 32 characters.
 - `create_extra_fields` - Extra fields for create user object. Use [Joi](https://github.com/hapijs/joi) with this for validation.
 - `update_extra_fields` - Extra fields for update user object. Use [Joi](https://github.com/hapijs/joi) with this for validation.
+- `scopes` - Array of user scopes. The first in the array will always be used as a admin scope.
 
 ```js
 create_extra_fields: {
@@ -141,6 +142,7 @@ plugins.push({
     expire: 60 * 60 * 24 * 365,
     session_private_key: 'KeyThatIsEqualOrLongerThan32CharactersIsNeededForThis',
     cache_name: 'serverCache',
+    scopes: ['admin', 'user'],
     create_extra_fields: {
       firstname: Joi.string().min(2).max(30).required(),
       lastname: Joi.string().min(2).max(30).required()
