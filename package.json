@@ -8,6 +8,10 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^0.8.5",
+    "boom": "^7.1.1",
+    "catbox-memory": "^3.1.1",
+    "catbox-mongodb": "^3.0.1",
+    "hapi-auth-cookie": "^7.0.0",
     "inquirer": "^1.0.3",
     "joi": "^8.1.0",
     "joi-objectid": "^2.0.0",
@@ -20,5 +24,13 @@
   "bugs": {
     "url": "https://github.com/asayuki/hapi-users-plugin/issues"
   },
-  "homepage": "https://github.com/asayuki/hapi-users-plugin#readme"
+  "homepage": "https://github.com/asayuki/hapi-users-plugin#readme",
+  "devDependencies": {
+    "bluebird": "^3.5.1",
+    "catbox": "^10.0.2",
+    "code": "^5.1.2",
+    "hapi": "^16.6.2",
+    "lab": "^15.1.2",
+    "mongoose": "^4.13.0"
+  }
 }
