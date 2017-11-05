@@ -20,13 +20,16 @@ const db = Mongoose.connect(process.env.MONGO_URL + process.env.MONGO_DB, {
 const User = require('../usermodel');
 const testUser = {
   username: 'testuser',
-  password: 'testpassword'
+  password: 'testpassword',
+  scope: 'admin'
 };
 
 experiment('hapi-users-plugin', () => {
 
-  let userId;
+  let testUserId;
   let testUserArtifact;
+  let createUserId;
+  let createUserArtifact;
 
   before(() => {
 
@@ -42,7 +45,11 @@ experiment('hapi-users-plugin', () => {
         }
   
         user.password = hash;
-        user.save().then(() => {
+        user.scope = testUser.scope;
+
+        user.save().then((newUser) => {
+          testUserId = newUser._id;
+
           server = new Hapi.Server();
           server.connection();
     
@@ -76,7 +83,8 @@ experiment('hapi-users-plugin', () => {
             server.register([{
               register: require('../'),
               options: {
-                url: '/api/users'
+                url: '/api/users',
+                scopes: ['admin', 'user']
               }
             }], (error) => {
               if (!error) {
@@ -135,7 +143,61 @@ experiment('hapi-users-plugin', () => {
     });
   });
 
-  test('Fail to create user', () => {
+  test('Fail to create user with no password', () => {
+    return server.inject({
+      method: 'POST',
+      url: '/api/users',
+      payload: {
+        username: 'death',
+        password: ''
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(400);
+      expect(response.result.error).to.be.string();
+    });
+  });
+
+  test('Fail to create user with no username', () => {
+    return server.inject({
+      method: 'POST',
+      url: '/api/users',
+      payload: {
+        username: '',
+        password: 'nangijala'
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(400);
+      expect(response.result.error).to.be.string();
+    });
+  });
+
+  test('Fail to create user with same username as another user', () => {
+    return server.inject({
+      method: 'POST',
+      url: '/api/users',
+      payload: {
+        username: 'testuser',
+        password: 'nangijala'
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(400);
+      expect(response.result.error).to.be.string();
+    });
+  });
+
+  test('Create user with default scope', () => {
     return server.inject({
       method: 'POST',
       url: '/api/users',
@@ -148,21 +210,120 @@ experiment('hapi-users-plugin', () => {
         sid: testUserArtifact
       }
     }).then((response) => {
+      createUserId = response.result.userId;
       expect(response.statusCode).to.equal(201);
       expect(response.result.userCreated).to.be.true();
     });
   });
+
+  test('Login with created user', () => {
+    return server.inject({
+      method: 'POST',
+      url: '/api/users/login',
+      payload: {
+        username: 'death',
+        password: 'nangijala'
+      }
+    }).then((response) => {
+
+      createUserArtifact = response.request.auth.artifacts.sid;
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.result.loggedin).to.be.true();
+    });
+  });
+
+  test('Fail to create user with user with user scope', () => {
+    return server.inject({
+      method: 'POST',
+      url: '/api/users',
+      payload: {
+        username: 'simba',
+        password: 'lionking'
+      },
+      credentials: {
+        username: 'death',
+        password: 'nangijala',
+      },
+      artifacts: {
+        sid: createUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(403);
+      expect(response.result.error).to.be.string();
+    });
+  });
+
+  test('Fail to edit another user as admin', () => {
+    return server.inject({
+      method: 'PUT',
+      url: '/api/users/' + createUserId,
+      payload: {
+        username: ''
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(400);
+    });
+  });
+
+  test('Edit another user as admin', () => {
+    return server.inject({
+      method: 'PUT',
+      url: '/api/users/' + createUserId,
+      payload: {
+        username: 'deathgod'
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(200);
+    });
+  });
+
+  test('Fail to edit own user', () => {
+    return server.inject({
+      method: 'PUT',
+      url: '/api/users/',
+      payload: {
+        username: ''
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(400);
+    });
+  });
+
+  test('Edit own user', () => {
+    return server.inject({
+      method: 'PUT',
+      url: '/api/users/',
+      payload: {
+        username: 'testuserultra'
+      },
+      credentials: testUser,
+      artifacts: {
+        sid: testUserArtifact
+      }
+    }).then((response) => {
+      expect(response.statusCode).to.equal(200);
+    });
+  });
 });
 
-// Create user
-// Fail to create user
 // Edit user
 // Fail to edit user
 // Get user
 // Fail to get user
 // Delete user
 // Fail to delete user
-// Login
-// Fail to login
 // Logout
 // Fail to logout (not logged in)

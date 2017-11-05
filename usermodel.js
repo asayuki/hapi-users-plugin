@@ -15,7 +15,12 @@ const user = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  scope: {
+    type: String,
+    required: true
+  },
+  options: Schema.Types.Mixed
 });
 
 user.methods.comparePassword = (password, hash, callback) => {
