@@ -19,6 +19,7 @@ experiment('hapi-users-plugin', () => {
     let server;
     let testUserId;
     let testUserJwt;
+    
     const testUser = {
         username: 'testuser',
         password: 'testpassword',
@@ -100,11 +101,9 @@ experiment('hapi-users-plugin', () => {
                 password: testUser.password
             }
         }).then((response) => {
-
-            console.log(response.result);
-
             expect(response.statusCode).to.equal(200);
-            expect(response.result.token).to.be.a.string();
+            expect(response.headers.authorization).to.be.a.string();
+            testUserJwt = response.headers.authorization;
         });
     });
     /*
