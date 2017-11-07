@@ -1,5 +1,4 @@
 'use strict';
-
 const Hapi = require('hapi');
 const { hashPassword } = require('../lib/utils');
 const { expect } = require('code');
@@ -20,7 +19,6 @@ experiment('hapi-users-plugin', () => {
     let server;
     let testUserId;
     let testUserJwt;
-    const secret = 'SuperDuperSecretYouCantFigureOut';
     const testUser = {
         username: 'testuser',
         password: 'testpassword',
@@ -49,9 +47,6 @@ experiment('hapi-users-plugin', () => {
                     server = new Hapi.Server();
                     server.connection();
 
-                    const cache = server.cache({segment: 'sessions', expiresIn: 3 * 24 * 60 * 60 * 1000 });
-                    server.app.cache = cache;
-
                     server.register([
                         require('hapi-auth-jwt2'),
                         {
@@ -61,24 +56,6 @@ experiment('hapi-users-plugin', () => {
                             }
                         }
                      ], (error) => {
-                        server.auth.strategy('jwt', 'jwt', {
-                            key: secret,
-                            validateFunc: (request, session, callback) => {
-                                cache.get(session.sid, (error, cached) => {
-                                  if (error) {
-                                    return callback(error, false);
-                                  }
-                          
-                                  if (!cached) {
-                                    return callback(null, false);
-                                  }
-                          
-                                  return callback(null, true, cached.account);
-                                });
-                            },
-                            verifyOptions: { algorithms: ['HS256'] }
-                        });
-
                         resolve();
                     });
                 });

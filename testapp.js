@@ -16,6 +16,7 @@ const db = Mongoose.connect(process.env.MONGO_URL + process.env.MONGO_DB, {
 });
 
 server.register([
+    require('hapi-auth-jwt2'),
     {
         register: require('./lib/'),
         options: {
@@ -23,7 +24,10 @@ server.register([
         }
     }
  ], (error) => {
-    server.start(() => {
+    server.start((error) => {
+        if (error)
+            throw error;
+
         console.log(`ARGH started at: ${server.info.uri}`);
     });
 });
