@@ -189,16 +189,76 @@ experiment('hapi-users-plugin', () => {
             expect(response.result.userCreated).to.be.true();
         });
     });
-    /*
-    test('', () => {
-
+    
+    test('Fail to edit another user as admin - No username', () => {
+        return server.inject({
+            method: 'PUT',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                id: testUserId,
+                username: ''
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
     });
 
-    test('', () => {
-
+    test('Fail to edit another user as admin - No password', () => {
+        return server.inject({
+            method: 'PUT',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                id: testUserId,
+                password: ''
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
     });
 
-    test('', () => {
+    test('Fail to edit another user as admin - Username allready taken', () => {
+        return server.inject({
+            method: 'PUT',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                id: testUserId,
+                username: 'nangijala'
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
+    });
+    
+    test('Edit another user as admin', () => {
+        return server.inject({
+            method: 'PUT',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                id: testUserId,
+                username: 'superdeath'
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(200);
+            expect(response.result.userUpdated).to.be.true();
+        });
+    });
+
+    /*test('', () => {
 
     });
 
