@@ -1,24 +1,10 @@
 {
   "author": "neme <neme@whispered.se>",
   "name": "hapi-users-plugin",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "Plugin to handle users and login for HapiJS",
   "main": "index.js",
-  "scripts": {},
   "license": "MIT",
-  "dependencies": {
-    "bcrypt": "^0.8.5",
-    "boom": "^7.1.1",
-    "catbox-memory": "^3.1.1",
-    "catbox-mongodb": "^3.0.1",
-    "hapi-auth-cookie": "^7.0.0",
-    "hapi-auth-jwt2": "^7.3.0",
-    "inquirer": "^1.0.3",
-    "joi": "^8.1.0",
-    "joi-objectid": "^2.0.0",
-    "jsonwebtoken": "^7.0.0",
-    "redis-connection": "^5.4.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asayuki/hapi-users-plugin.git"
@@ -27,12 +13,26 @@
     "url": "https://github.com/asayuki/hapi-users-plugin/issues"
   },
   "homepage": "https://github.com/asayuki/hapi-users-plugin#readme",
-  "devDependencies": {
+  "bin": {
+    "hapi-users-plugin": "./bin/hapi-users-plugin"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/lab -v"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.5",
     "bluebird": "^3.5.1",
-    "catbox": "^10.0.2",
+    "boom": "^7.1.1",
+    "joi": "^8.1.0",
+    "joi-objectid": "^2.0.0",
+    "jsonwebtoken": "^7.0.0",
+    "mongoose": "^4.13.0",
+    "redis-connection": "^5.4.0"
+  },
+  "devDependencies": {
     "code": "^5.1.2",
     "hapi": "^16.6.2",
-    "lab": "^15.1.2",
-    "mongoose": "^4.13.0"
+    "hapi-auth-jwt2": "^7.3.0",
+    "lab": "^15.1.2"
   }
 }

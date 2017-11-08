@@ -1,4 +1,6 @@
 # TODO 2.0
 
-* The option to add extra fields to user object
+* Fix readme
+* The option to add extra fields to user object, maybe.
 * Clean up the mess
+* Write better error messages

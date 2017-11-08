@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+const User = require('../lib/usermodel');
+const { hashPassword } = require('../lib/utils');
+
+var readline = require('readline');
+let args = process.argv.slice(2);
+let username;
+
+if (args.indexOf('--cu') >= 0) {
+    username = args[args.indexOf('--cu') + 1];
+}
+
+if (typeof username !== 'undefined') {
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    function hidden(query, callback) {
+        var stdin = process.openStdin();
+        process.stdin.on("data", function(char) {
+            char = char + "";
+            switch (char) {
+                case "\n":
+                case "\r":
+                case "\u0004":
+                    stdin.pause();
+                    break;
+                default:
+                    process.stdout.write("\033[2K\033[200D" + query + Array(rl.line.length+1).join("*"));
+                    break;
+            }
+        });
+
+        rl.question(query, function(value) {
+            rl.history = rl.history.slice(1);
+            callback(value);
+        });
+    }
+
+    hidden("password : ", (password) => {
+        hashPassword(password, (error, passwordHash) => {
+            const Mongoose = require('mongoose');
+            Mongoose.Promise = require('bluebird');
+            const db = Mongoose.connect(process.env.MONGO_URL + process.env.MONGO_DB, {
+                useMongoClient: true
+            }, (error) => {
+                if (error) {
+                    throw error;
+                }
+            });
+            let user = new User();
+            user.username = username;
+            user.password = passwordHash;
+            user.admin = true;
+            user.save().then(() => {
+                console.log('User with admin priviliges created.');
+                process.exit();
+            }, (error) => {
+                console.log(error);
+                process.exit();
+            });
+        });
+    });
+} else {
+    console.log('Please add a username with args: --cu [username]');
+    process.exit();
+}
