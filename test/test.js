@@ -29,25 +29,19 @@ experiment('hapi-users-plugin', () => {
     before(() => {
         // Clear users in testdb
         User.remove({}).then();
-
         return new Promise((resolve) => {
             let user = new User();
             user.username = testUser.username;
             user.admin = testUser.admin;
-
             hashPassword(testUser.password, (error, hash) => {
                 if (error) {
                     throw error;
                 }
-
                 user.password = hash;
-
                 user.save().then((newUser) => {
                     testUserId = newUser._id;
-
                     server = new Hapi.Server();
                     server.connection();
-
                     server.register([
                         require('hapi-auth-jwt2'),
                         {
@@ -106,11 +100,96 @@ experiment('hapi-users-plugin', () => {
             testUserJwt = response.headers.authorization;
         });
     });
-    /*
-    test('', () => {
-
+    
+    test('Fail to create user - no password', () => {
+        return server.inject({
+            method: 'POST',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                username: 'death',
+                password: ''
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
     });
 
+    test('Fail to create user - no username', () => {
+        return server.inject({
+            method: 'POST',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                username: '',
+                password: 'nangijala'
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
+    });
+
+    test('Fail to create user - username is taken', () => {
+        return server.inject({
+            method: 'POST',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                username: 'testuser',
+                password: 'nangijala'
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(400);
+            expect(response.result.error).to.be.a.string();
+        });
+    });
+
+    test('Create user - with default scope', () => {
+        return server.inject({
+            method: 'POST',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                username: 'death',
+                password: 'nangijala'
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(201);
+            expect(response.result.userCreated).to.be.true();
+            expect(response.result.userId).to.be.a.string();
+
+            testUserId = response.result.userId;
+        });
+    });
+
+    test('Create user - with admin scope', () => {
+        return server.inject({
+            method: 'POST',
+            url: '/api/users',
+            headers: {
+                'Authorization': testUserJwt
+            },
+            payload: {
+                username: 'nangijala',
+                password: 'death',
+                admin: true
+            }
+        }).then((response) => {
+            expect(response.statusCode).to.equal(201);
+            expect(response.result.userCreated).to.be.true();
+        });
+    });
+    /*
     test('', () => {
 
     });
