@@ -7,7 +7,7 @@ const Mongoose = require('mongoose');
 const User = require('../lib/usermodel');
 
 Mongoose.Promise = require('bluebird');
-const db = Mongoose.connect(process.env.MONGO_URL + process.env.MONGO_DB, {
+const db = Mongoose.connect(process.env.MONGO_URL, {
     useMongoClient: true
 }, (error) => {
     if (error) {

@@ -1,7 +1,7 @@
 {
   "author": "neme <neme@whispered.se>",
   "name": "hapi-users-plugin",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Plugin to handle users and login for HapiJS",
   "main": "index.js",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "joi-objectid": "^2.0.0",
     "jsonwebtoken": "^7.0.0",
     "mongoose": "^4.13.0",
-    "redis-connection": "^5.4.0"
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "bluebird": "^3.5.1",

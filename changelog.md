@@ -1,5 +1,9 @@
 # Changelog
 
+## 2017-11-09
+
+* Quite alot.
+
 ## 2016-06-29
 
 * || instead of && when checking for error or false-response might be a good thing.
