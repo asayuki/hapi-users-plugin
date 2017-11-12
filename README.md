@@ -20,7 +20,7 @@ All endpoints, except `/authenticate` requires that `Authorization` is set in he
         * Body:
             * `loggedin` - true
         * Headers:
-            * `authorization` - JWT token
+            * `authorization` - Signed JWT to use
 * `GET/POST /api/users/unauthenticate`
 * `PUT /api/users`
     * Default payload:
@@ -28,6 +28,9 @@ All endpoints, except `/authenticate` requires that `Authorization` is set in he
         * `username` - Joi.string()
         * `password` - Joi.string()
         * `admin` - Joi.boolean()
+    * Response if editing own user:
+        * Headers:
+            * `authorization` - Updated and signed JWT to use.
 * `DELETE /api/users`
     * Default payload:
         * `id` - Joi.objectId().required()
